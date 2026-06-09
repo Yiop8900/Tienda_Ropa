@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}Inicio – Tienda Ropa{% endblock %}
+
+{% block content %}
+
+<!-- ── Ticker + Hero ── -->
+<section class="hero-section">
+  <div class="hero-ticker">
+    <div class="ticker-inner">
+      👗 NUEVA COLECCIÓN &nbsp;✦&nbsp; 👕 ENVÍOS A TODO EL PAÍS &nbsp;✦&nbsp;
+      👖 CALIDAD GARANTIZADA &nbsp;✦&nbsp; 🧥 MODA PARA TODOS &nbsp;✦&nbsp;
+      👗 NUEVA COLECCIÓN &nbsp;✦&nbsp; 👕 ENVÍOS A TODO EL PAÍS &nbsp;✦&nbsp;
+      👖 CALIDAD GARANTIZADA &nbsp;✦&nbsp; 🧥 MODA PARA TODOS &nbsp;✦&nbsp;
+    </div>
+  </div>
+
+  <div class="container py-5">
+    <h1 class="hero-title">Tu estilo,<br>tu identidad</h1>
+    <p class="hero-sub">Descubre nuestra colección de ropa para cada ocasión</p>
+    <div class="hero-badges">
+      <span class="hero-badge">✂️ Calidad Premium</span>
+      <span class="hero-badge">🚚 Despacho Rápido</span>
+      <span class="hero-badge">❤️ Hecho con amor</span>
+      <span class="hero-badge">🔄 Cambios fáciles</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Filtro categorías ── -->
+<section class="container my-4">
+  <div class="d-flex flex-wrap gap-2 justify-content-center">
+    <a href="{{ url_for('index') }}"
+       class="btn rounded-pill px-4 {{ 'btn-dark' if not cat_actual else 'btn-outline-dark' }}">
+      Todos
+    </a>
+    {% for c in categorias %}
+    <a href="{{ url_for('index', categoria=c.id) }}"
+       class="btn rounded-pill px-4 {{ 'btn-dark' if cat_actual == c.id else 'btn-outline-dark' }}">
+      {{ c.nombre }}
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ── Grilla de productos ── -->
+<section class="container mb-5">
+
+  {% if busqueda %}
+  <p class="text-muted mb-3">
+    Resultados para: <strong>{{ busqueda }}</strong>
+    ({{ productos|length }} producto{{ 's' if productos|length != 1 }})
+  </p>
+  {% endif %}
+
+  {% if productos %}
+  <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-4">
+    {% for p in productos %}
+    <div class="col">
+      <div class="card product-card h-100">
+
+        <!-- Imagen -->
+        <div class="product-img-wrap position-relative">
+          {% if p.imagen %}
+          <img src="{{ url_for('static', filename='uploads/' ~ p.imagen) }}"
+               class="card-img-top product-img" alt="{{ p.nombre }}">
+          {% else %}
+          <div class="no-product-img d-flex align-items-center justify-content-center">
+            <i class="bi bi-bag text-muted" style="font-size:3.5rem"></i>
+          </div>
+          {% endif %}
+
+          {% if p.cat_nombre %}
+          <span class="badge-cat">{{ p.cat_nombre }}</span>
+          {% endif %}
+
+          {% if p.stock == 0 %}
+          <span class="badge-sin-stock">Sin stock</span>
+          {% endif %}
+        </div>
+
+        <!-- Cuerpo -->
+        <div class="card-body d-flex flex-column">
+          <h6 class="card-title fw-bold mb-1">{{ p.nombre }}</h6>
+          <p class="card-text text-muted small flex-grow-1">
+            {{ p.descripcion or '' }}
+          </p>
+          <div class="d-flex align-items-center justify-content-between mt-3">
+            <span class="product-price">{{ p.precio | precio_cl }}</span>
+            {% if p.stock > 0 %}
+            <button class="btn btn-add-cart btn-sm btn-agregar-ajax"
+                    data-pid="{{ p.id }}"
+                    data-url="{{ url_for('agregar_carrito_ajax', pid=p.id) }}"
+                    data-fallback="{{ url_for('agregar_carrito', pid=p.id) }}">
+              <i class="bi bi-cart-plus me-1"></i>Agregar
+            </button>
+            {% else %}
+            <button class="btn btn-secondary btn-sm" disabled>Sin stock</button>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-search" style="font-size:4rem;color:#ccc"></i>
+    <h4 class="mt-3 text-muted">No se encontraron productos</h4>
+    <a href="{{ url_for('index') }}" class="btn btn-dark mt-3 rounded-pill px-4">
+      Ver todos
+    </a>
+  </div>
+  {% endif %}
+
+</section>
+
+<!-- ── Franja de características ── -->
+<section class="features-strip py-5">
+  <div class="container">
+    <div class="row text-center g-4">
+      <div class="col-6 col-md-3">
+        <i class="bi bi-award-fill fs-2 text-warning"></i>
+        <p class="fw-bold text-white mt-2 mb-0">Calidad Premium</p>
+        <small class="text-secondary">Materiales seleccionados</small>
+      </div>
+      <div class="col-6 col-md-3">
+        <i class="bi bi-truck fs-2 text-warning"></i>
+        <p class="fw-bold text-white mt-2 mb-0">Despacho Rápido</p>
+        <small class="text-secondary">Coordinamos la entrega</small>
+      </div>
+      <div class="col-6 col-md-3">
+        <i class="bi bi-arrow-repeat fs-2 text-warning"></i>
+        <p class="fw-bold text-white mt-2 mb-0">Cambios fáciles</p>
+        <small class="text-secondary">Sin complicaciones</small>
+      </div>
+      <div class="col-6 col-md-3">
+        <i class="bi bi-chat-dots-fill fs-2 text-warning"></i>
+        <p class="fw-bold text-white mt-2 mb-0">Atención personalizada</p>
+        <small class="text-secondary">Estamos para ayudarte</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}{{ 'Editar' if producto else 'Nuevo' }} producto{% endblock %}
+{% block page_title %}{{ 'Editar producto' if producto else 'Nuevo producto' }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-9 col-lg-7">
+    <div class="card border-0 shadow-sm rounded-3">
+      <div class="card-body p-4">
+
+        <form method="POST" enctype="multipart/form-data">
+          <div class="row g-3">
+
+            <!-- Nombre -->
+            <div class="col-12">
+              <label class="form-label fw-semibold">Nombre *</label>
+              <input type="text" name="nombre" class="form-control"
+                     value="{{ producto.nombre if producto else '' }}" required>
+            </div>
+
+            <!-- Descripción -->
+            <div class="col-12">
+              <label class="form-label fw-semibold">Descripción</label>
+              <textarea name="descripcion" class="form-control" rows="3"
+                        placeholder="Describe el producto…">{{ producto.descripcion if producto and producto.descripcion else '' }}</textarea>
+            </div>
+
+            <!-- Precio -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Precio ($) *</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" name="precio" class="form-control"
+                       step="1" min="0"
+                       value="{{ producto.precio | int if producto else '' }}" required>
+              </div>
+            </div>
+
+            <!-- Stock -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Stock</label>
+              <input type="number" name="stock" class="form-control" min="0"
+                     value="{{ producto.stock if producto else 0 }}">
+            </div>
+
+            <!-- Categoría -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Categoría</label>
+              <select name="categoria_id" class="form-select">
+                <option value="">Sin categoría</option>
+                {% for c in categorias %}
+                <option value="{{ c.id }}"
+                  {{ 'selected' if producto and producto.categoria_id == c.id }}>
+                  {{ c.nombre }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Activo -->
+            <div class="col-md-6 d-flex align-items-end pb-1">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" name="activo"
+                       id="swActivo" role="switch"
+                       {{ 'checked' if not producto or producto.activo }}>
+                <label class="form-check-label fw-semibold" for="swActivo">
+                  Producto activo (visible en tienda)
+                </label>
+              </div>
+            </div>
+
+            <!-- Imagen -->
+            <div class="col-12">
+              <label class="form-label fw-semibold">Imagen del producto</label>
+              {% if producto and producto.imagen %}
+              <div class="mb-2 d-flex align-items-center gap-3">
+                <img src="{{ url_for('static', filename='uploads/' ~ producto.imagen) }}"
+                     style="height:90px;border-radius:8px" alt="Imagen actual">
+                <small class="text-muted">Imagen actual — sube una nueva para reemplazarla</small>
+              </div>
+              {% endif %}
+              <input type="file" name="imagen" class="form-control" accept="image/*">
+              <div class="form-text">PNG, JPG, WEBP — máx. 16 MB</div>
+            </div>
+
+          </div><!-- /row -->
+
+          <hr class="my-4">
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-dark rounded-pill px-4">
+              <i class="bi bi-floppy me-2"></i>
+              {{ 'Guardar cambios' if producto else 'Crear producto' }}
+            </button>
+            <a href="{{ url_for('admin_productos') }}"
+               class="btn btn-outline-secondary rounded-pill px-4">
+              Cancelar
+            </a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

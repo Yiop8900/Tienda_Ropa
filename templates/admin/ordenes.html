@@ -1,0 +1,70 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Pedidos{% endblock %}
+{% block page_title %}Gestión de Pedidos{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm rounded-3">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Cliente</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+            <th>Total</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Cambiar estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in ordenes %}
+          <tr>
+            <td class="text-muted small">{{ o.id }}</td>
+            <td class="fw-semibold">{{ o.nombre }}</td>
+            <td>{{ o.telefono }}</td>
+            <td>{{ o.direccion or '—' }}</td>
+            <td class="fw-semibold">{{ o.total | precio_cl }}</td>
+            <td><small class="text-muted">{{ o.fecha }}</small></td>
+            <td>
+              <span class="badge
+                {% if o.estado == 'pendiente'  %}bg-warning text-dark
+                {% elif o.estado == 'confirmado' %}bg-info text-dark
+                {% elif o.estado == 'enviado'   %}bg-primary
+                {% elif o.estado == 'entregado' %}bg-success
+                {% else %}bg-secondary{% endif %}">
+                {{ o.estado | title }}
+              </span>
+            </td>
+            <td>
+              <form method="POST"
+                    action="{{ url_for('admin_cambiar_estado', oid=o.id) }}"
+                    class="d-flex gap-1">
+                <select name="estado" class="form-select form-select-sm"
+                        style="min-width:130px">
+                  {% for est in ['pendiente','confirmado','enviado','entregado','cancelado'] %}
+                  <option value="{{ est }}" {{ 'selected' if o.estado == est }}>
+                    {{ est | title }}
+                  </option>
+                  {% endfor %}
+                </select>
+                <button class="btn btn-sm btn-outline-dark rounded-pill px-3">OK</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="8" class="text-center text-muted py-5">
+              <i class="bi bi-bag-x" style="font-size:2.5rem;color:#ddd"></i>
+              <p class="mt-2 mb-0">Sin pedidos aún</p>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
