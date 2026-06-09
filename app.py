@@ -25,7 +25,7 @@ MP_ACCESS_TOKEN = "APP_USR-878370283886681-060909-7a6fe56e83b2212623aedc67f2c0db
 # Déjala vacía para uso local: MercadoPago igual procesa el pago
 # pero redirige a su propia página de confirmación en vez de la tuya.
 # También se puede setear con la variable de entorno MP_BASE_URL
-MP_BASE_URL = os.environ.get("MP_BASE_URL", "").strip().rstrip("/")
+MP_BASE_URL = "https://tienda-ropa-29re.onrender.com/"
 
 BASE_DIR      = os.path.abspath(os.path.dirname(__file__))
 DATABASE      = os.path.join(BASE_DIR, "tienda.db")
